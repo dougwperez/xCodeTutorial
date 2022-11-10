@@ -4,25 +4,18 @@ import Image from "next/image";
 import { todosMachine } from "../machines/todoAppMachine";
 
 const Home: NextPage = () => {
-  const [state, send] = useMachine(todosMachine);
+  const [state, send] = useMachine(todosMachine, {
+    services: {
+      loadTodos: async () => {
+        throw new Error("ERROR");
+        return ["take trash out!", "do laundry"];
+      },
+    },
+  });
   return (
     <div>
-      {" "}
-      <div>{JSON.stringify(state.value)}</div>
-      <button
-        onClick={() => {
-          send("Todos loaded");
-        }}
-      >
-        Todos Loaded
-      </button>
-      <button
-        onClick={() => {
-          send("Loading todos failed");
-        }}
-      >
-        Loading Todos Failed
-      </button>
+      <pre>{JSON.stringify(state.value)}</pre>
+      <pre>{JSON.stringify(state.context)}</pre>
     </div>
   );
 };
