@@ -30,8 +30,8 @@ export interface Typegen0 {
       type: "error.platform.Todo machine.Loading Todos:invocation[0]";
       data: unknown;
     };
-    "xstate.after(2500)#Todo machine.deleting todo errored": {
-      type: "xstate.after(2500)#Todo machine.deleting todo errored";
+    "xstate.after(2500)#Todo machine.Deleting todo errored": {
+      type: "xstate.after(2500)#Todo machine.Deleting todo errored";
     };
     "xstate.init": { type: "xstate.init" };
   };
@@ -62,17 +62,19 @@ export interface Typegen0 {
       | "xstate.init";
     saveTodo: "Submit";
   };
-  eventsCausingGuards: {};
+  eventsCausingGuards: {
+    "Has todos": "done.invoke.Todo machine.Loading Todos:invocation[0]";
+  };
   eventsCausingDelays: {};
   matchesStates:
     | "Creating new todo"
     | "Creating new todo.Saving todo"
     | "Creating new todo.Showing form input"
     | "Deleting todo"
+    | "Deleting todo errored"
     | "Loading Todos"
     | "Loading todos errored"
     | "Todos Loaded"
-    | "deleting todo errored"
     | { "Creating new todo"?: "Saving todo" | "Showing form input" };
   tags: never;
 }
