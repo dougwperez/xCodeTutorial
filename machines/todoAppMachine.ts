@@ -1,23 +1,29 @@
 import { createMachine, assign } from "xstate";
 
 export const todosMachine =
-  /** @xstate-layout N4IgpgJg5mDOIC5QBUD2FUAIC2BDAxgBYCWAdmAHQAyquEZUmaGsAxBuRWQG6oDWlZljxEylGnQZN0qWAh6p8uAC7FUpANoAGALradiUAAdZxVesMgAHogCMAVgDsFW44AsbgMwAON44Bs9v4ATPYANCAAnogAtO4UwbYAnG72yVpuwUn+3t4AvnkRQjgEJJwS9KSMQmxgAE51qHUURgA2KgBmTdgUxSJl4rSV1TJyCkrmmrr6liawZmqkljYIMbZanhT+qRnejlrB-raejhHRCMcUjt72SZ4ebt7Bmba5BYUgpOhwln2lYtQhlIarNTJNlrFbJdHOt-HdPLcTuEopDXi5HElMYdHE5vLZQgUijISqJODVMBVIKD5uCkNZED57Fsca4tN4kr4kWdYvFEik0kkMlkcvkPn9SYNJFVMMpRph6o06lS6XMFhY6StPD4KLk0p5Xgi7jjuQhnhQtGl7B5Xvz9QSxcT+mJqWqlhrIUcrrD4YjjSjVsEtM5XJiktjcfj7O88kA */
+  /** @xstate-layout N4IgpgJg5mDOIC5QBUD2FUAIC2BDAxgBYCWAdmAHQAyquEZUmaGsAxBuRWQG6oDWlZljxEylGnQZN0qWAh6p8uAC7FUpANoAGALradiUAAdZxVesMgAHogBsAJgoB2ABwBWLQGYALAEYnAJy2Lk5uADQgAJ6IALT2AY7eLlpOvvYuAVoObgC+ORFCOAQknBL0pIxCbGAATjWoNRRGADYqAGYN2BSFIiXitOWVMnIKSuaauvqWJrBmaqSWNghxnrYU3loB3m7xAVsuIRHRCC4UWptaSd62vgG+Gw55BTJFopxVmGWQrADCNWAqMCYcgAdymSBAMzmFghS3s3m86wCTnsbh8-iCIXCUVi8Iod2SoTcNx2Pk8LieIB6xTEFD+ANUFWBYBBmGUMgoAGVCKgQVIOjVsJgyEYAK7KVgAMU6wtIYuUmCIuAqkHBxlM40WiBCZ1snl8vi8bl8xNRR0Q9kCFHs9lWnnSaVylNI6Dglmpb36kiZVWmGvmWuW8LW3lCmyctlN2OOMTSnnxxJCLlsDkNAXJlI9fW6w0+A0gftmmthFuuFENWhcnnOrkd5uWBvjyM2vlsTiSl2CFPyVJevVpZSk7JYmFq9X+EEL0IWJaDvlOe08TnbfgeZpxCFbAWcaM8xPTe-ToUzfZpnHpKikoLZHO5vP5MpF4qnxdAcKSO-tATcGRc3iX0aICa8bbPYWj2HqbbzsePZZrSF6Mow17DqgL4BrOnjblk+qGnuJrZPWkbrDs4GQakWInhgrx9GhMJvriWzrGGyKRgRG4xOSvjrISaQZFkqJ5HkQA */
   createMachine(
     {
+      context: {
+        todos: [] as string[],
+        errorMessage: undefined as string | undefined,
+        createNewTodoFormInput: "",
+      },
       tsTypes: {} as import("./todoAppMachine.typegen").Typegen0,
       schema: {
-        // events: {} as
-        //   | { type: "Todos loaded"; todos: string[] }
-        //   | { type: "Loading todos failed"; errorMessage: string },
         services: {} as {
           loadTodos: {
             data: string[];
           };
         },
-      },
-      context: {
-        todos: [] as string[],
-        errorMessage: undefined as string | undefined,
+        events: {} as
+          | {
+              type: "Create new";
+            }
+          | {
+              type: "Form input changed";
+              value: string;
+            },
       },
       id: "Todo machine",
       initial: "Loading Todos",
@@ -39,8 +45,26 @@ export const todosMachine =
             ],
           },
         },
-        "Todos Loaded": {},
+        "Todos Loaded": {
+          on: {
+            "Create new": {
+              target: "Creating new todo",
+            },
+          },
+        },
         "Loading todos errored": {},
+        "Creating new todo": {
+          initial: "Showing form input",
+          states: {
+            "Showing form input": {
+              on: {
+                "Form input changed": {
+                  actions: "assignFormInputToContext",
+                },
+              },
+            },
+          },
+        },
       },
     },
     {
@@ -53,6 +77,11 @@ export const todosMachine =
         assignErrorToContext: assign((context, event) => {
           return {
             errorMessage: (event.data as Error).message,
+          };
+        }),
+        assignFormInputToContext: assign((context, event) => {
+          return {
+            createNewTodoFormInput: event.value,
           };
         }),
       },

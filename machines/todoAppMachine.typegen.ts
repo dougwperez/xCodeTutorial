@@ -25,6 +25,7 @@ export interface Typegen0 {
   };
   eventsCausingActions: {
     assignErrorToContext: "error.platform.Todo machine.Loading Todos:invocation[0]";
+    assignFormInputToContext: "Form input changed";
     assignTodosToContext: "done.invoke.Todo machine.Loading Todos:invocation[0]";
   };
   eventsCausingServices: {
@@ -32,6 +33,12 @@ export interface Typegen0 {
   };
   eventsCausingGuards: {};
   eventsCausingDelays: {};
-  matchesStates: "Loading Todos" | "Loading todos errored" | "Todos Loaded";
+  matchesStates:
+    | "Creating new todo"
+    | "Creating new todo.Showing form input"
+    | "Loading Todos"
+    | "Loading todos errored"
+    | "Todos Loaded"
+    | { "Creating new todo"?: "Showing form input" };
   tags: never;
 }
